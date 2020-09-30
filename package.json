@@ -20,6 +20,7 @@
     "discord.js": "^11.5.1",
     "fs": "^0.0.1-security",
     "ldapjs": "^1.0.2",
+    "nodemailer": "^6.4.11",
     "request": "^2.88.0"
   },
   "homepage": "github.com/theycallmemac/brickbot",

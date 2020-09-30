@@ -84,5 +84,4 @@ function processCommand(receivedMessage) {
     }
 }
 
-var bot_secret_token = fs.readFileSync("/etc/brickbot.token", "utf-8").replace(/\n$/, "");
-bot.login(bot_secret_token);
+bot.login(fs.readFileSync("/etc/brickbot.token", "utf-8").trim());
