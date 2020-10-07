@@ -60,7 +60,7 @@ function handleFirstStep(args, receivedMessage) {
     }, function(error, info) {
         if (error) {
             console.log(error);
-            receivedMessage.reply("I couldn't send the verification email. Sorry :-(");
+            receivedMessage.reply("I couldn't send the verification email. Sorry :(");
         } else {
             activeVerifications[receivedMessage.author] = {
                 code: code,
