@@ -41,14 +41,14 @@ function generateVerificationCode() {
     return crypto.randomBytes(4).toString('hex');
 }
 
-function handleFirstStep(args, receivedMessage) {
+function handleFirstStep(bot, args, receivedMessage) {
     if (args.length !== 1) {
-        receivedMessage.channel.send("!verify <your-redbrick-email-address>");
+        receivedMessage.channel.send(helpers.embedify(bot, "!verify <your-redbrick-email-address>"));
         return;
     }
     const emailAddress = args[0];
     if (!emailAddress.endsWith("@redbrick.dcu.ie")) {
-        receivedMessage.reply("That's not a valid email address. It must be username@redbrick.dcu.ie");
+        receivedMessage.reply(helpers.embedify(bot, "That's not a valid email address. It must be username@redbrick.dcu.ie"));
         return;
     }
     const code = generateVerificationCode();
@@ -60,41 +60,43 @@ function handleFirstStep(args, receivedMessage) {
     }, function(error, info) {
         if (error) {
             console.log(error);
-            receivedMessage.reply("I couldn't send the verification email. Sorry :(");
+            receivedMessage.reply(helpers.embedify(bot, "I couldn't send the verification email. Sorry :("));
         } else {
             activeVerifications[receivedMessage.author] = {
                 code: code,
                 createdAt: Date.now(),
             };
-            receivedMessage.reply("A verification code has been sent to the provided email address. Use !verify <code> once you have received it.");
+            receivedMessage.reply(helpers.embedify(bot, "A verification code has been sent to the provided email address. Use !verify <code> once you have received it."));
         }
     });
 }
 
-function handleSecondStep(args, receivedMessage) {
+function handleSecondStep(bot, args, receivedMessage) {
     if (args.length !== 1) {
-        receivedMessage.reply("Use !verify <code> to finish your verification.");
+        receivedMessage.reply(helpers.embedify(bot, "Use !verify <code> to finish your verification."));
         return;
     }
     const code = args[0];
     if (activeVerifications[receivedMessage.author].code !== code) {
-        receivedMessage.reply("That's not the correct verification code.");
+        receivedMessage.reply(helpers.embedify(bot, "That's not the correct verification code."));
         return;
     }
     activeVerifications[receivedMessage.author] = undefined;
-    receivedMessage.reply("You have been verified successfully!");
+    receivedMessage.reply(helpers.embedify(bot, "You have been verified successfully!"));
 }
 
 module.exports = {
     verifyCommand: function(bot, args, receivedMessage) {
         if (receivedMessage.channel.type !== "dm") {
-            receivedMessage.reply("The verfy command can only be used in direct messages.");
+            receivedMessage.reply(helpers.embedify(bot, "The verfy command can only be used in direct messages."));
             return;
         }
+        if (receivedMessage.author.roles.has(memberRole)) {
+        }
         if (!activeVerifications[receivedMessage.author]) {
-            handleFirstStep(args, receivedMessage);
+            handleFirstStep(bot, args, receivedMessage);
         } else {
-            handleSecondStep(args, receivedMessage);
+            handleSecondStep(bot, args, receivedMessage);
         }
     }
 };
